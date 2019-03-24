@@ -8,8 +8,6 @@ public interface IPresenterMain {
 
     void onCreate(FragmentManager fragmentManager, int containerId);
 
-    void onStop();
-
     void onStart(FragmentManager fragmentManager, int containerId);
 
     boolean onBackPressed();

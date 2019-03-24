@@ -9,9 +9,9 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import ru.alxr.contacts.ContactsApplication;
 import ru.alxr.contacts.R;
 import ru.alxr.contacts.base.FragmentBase;
+import ru.alxr.contacts.di.DetailsViewComponent;
 import ru.alxr.contacts.features.navigation.INavigator;
 
 public class FragmentDetails extends FragmentBase {
@@ -19,12 +19,13 @@ public class FragmentDetails extends FragmentBase {
     @Inject
     IPresenterDetails mPresenterDetails;
 
+    @SuppressWarnings("FieldCanBeLocal")//must keep to avoid garbage collected
     private IPresentDetailsCallback mPresenterDetailsCallback;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ContactsApplication.getComponent().inject(this);
+        DetailsViewComponent.Holder.get().inject(this);
         mPresenterDetailsCallback = new PresenterDetailsCallback();
         mPresenterDetails.setCallback(mPresenterDetailsCallback);
     }
@@ -47,6 +48,11 @@ public class FragmentDetails extends FragmentBase {
 
     private class PresenterDetailsCallback implements IPresentDetailsCallback {
 
+    }
+
+    @Override
+    protected void onComponentShouldBeDestroyed() {
+        DetailsViewComponent.Holder.finalizeComponent();
     }
 
 }

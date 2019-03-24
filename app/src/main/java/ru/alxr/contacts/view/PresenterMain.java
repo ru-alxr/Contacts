@@ -5,7 +5,7 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 import androidx.fragment.app.FragmentManager;
-import ru.alxr.contacts.ContactsApplication;
+import ru.alxr.contacts.di.MainViewComponent;
 import ru.alxr.contacts.features.navigation.INavigator;
 
 public class PresenterMain implements IPresenterMain {
@@ -16,18 +16,16 @@ public class PresenterMain implements IPresenterMain {
     private WeakReference<IPresenterMainCallback> mainCallbackReference;
 
     public PresenterMain() {
-        ContactsApplication.getComponent().inject(this);
+        MainViewComponent.Holder.get().inject(this);
     }
+
+    private boolean isJustCreated = true;
 
     @Override
     public void onCreate(FragmentManager fragmentManager, int containerId) {
         navigator.set(fragmentManager, containerId);
-        navigator.navigateContacts();
-    }
-
-    @Override
-    public void onStop() {
-
+        if (isJustCreated) navigator.navigateContacts();
+        isJustCreated = false;
     }
 
     @Override

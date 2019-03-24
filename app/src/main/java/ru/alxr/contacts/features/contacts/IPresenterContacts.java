@@ -6,4 +6,10 @@ public interface IPresenterContacts {
 
     void onDebug();
 
+    void onStart();
+
+    void onPermissionGranted();
+
+    void onPermissionDenied();
+
 }

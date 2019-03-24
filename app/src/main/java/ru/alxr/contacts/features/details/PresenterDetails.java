@@ -4,13 +4,13 @@ import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
 
-import ru.alxr.contacts.ContactsApplication;
+import ru.alxr.contacts.di.DetailsViewComponent;
 import ru.alxr.contacts.features.navigation.INavigator;
 
 public class PresenterDetails implements IPresenterDetails {
 
     public PresenterDetails(){
-        ContactsApplication.getComponent().inject(this);
+        DetailsViewComponent.Holder.get().inject(this);
     }
 
     @Inject

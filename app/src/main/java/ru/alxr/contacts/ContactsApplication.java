@@ -8,23 +8,23 @@ import ru.alxr.contacts.di.DaggerAppComponent;
 
 public class ContactsApplication extends Application {
 
-    private static AppComponent component;
-
-    public static AppComponent getComponent() {
-        return component;
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
-        component = buildComponent();
+        init(this);
     }
 
-    private AppComponent buildComponent() {
-        return DaggerAppComponent
+    private void init(ContactsApplication application) {
+        instance = DaggerAppComponent
                 .builder()
-                .appModule(new AppModule(this))
+                .appModule(new AppModule(application))
                 .build();
+    }
+
+    private static volatile AppComponent instance;
+
+    public static synchronized AppComponent getApplicationComponent() {
+        return instance;
     }
 
 }
