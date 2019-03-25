@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import javax.inject.Inject;
 
@@ -18,6 +19,8 @@ public class FragmentDetails extends FragmentBase {
 
     @Inject
     IPresenterDetails mPresenterDetails;
+
+    private TextView mDetailsView;
 
     @SuppressWarnings("FieldCanBeLocal")//must keep to avoid garbage collected
     private IPresentDetailsCallback mPresenterDetailsCallback;
@@ -39,6 +42,7 @@ public class FragmentDetails extends FragmentBase {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mDetailsView = view.findViewById(R.id.raw_data_view);
         Bundle args = getArguments();
         IContact contact;
         if (args == null || (contact = args.getParcelable(INavigator.PAYLOAD)) == null)
@@ -47,6 +51,11 @@ public class FragmentDetails extends FragmentBase {
     }
 
     private class PresenterDetailsCallback implements IPresentDetailsCallback {
+
+        @Override
+        public void setInfo(String value) {
+            mDetailsView.setText(value);
+        }
 
     }
 

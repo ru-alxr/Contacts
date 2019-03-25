@@ -7,7 +7,7 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 import ru.alxr.contacts.di.MainViewComponent;
-import ru.alxr.contacts.features.details.ContactImpl;
+import ru.alxr.contacts.features.details.IContact;
 import ru.alxr.contacts.features.navigation.INavigator;
 
 public class PresenterContacts implements IPresenterContacts {
@@ -25,18 +25,11 @@ public class PresenterContacts implements IPresenterContacts {
 
     @Override
     public void setCallback(IPresenterContactsCallback callback) {
-        Log.d("alxr_debug", "PresenterContacts: setCallback");
         mCallbackReference = new WeakReference<>(callback);
     }
 
     @Override
-    public void onDebug() {
-        navigator.navigate(new ContactImpl());
-    }
-
-    @Override
     public void onStart() {
-        Log.d("alxr_debug", "PresenterContacts: onStart permissionRequested=" + permissionRequested);
         IPresenterContactsCallback callback = mCallbackReference != null ? mCallbackReference.get() : null;
         if (callback == null) return;
         if (permissionRequested) {
@@ -48,18 +41,23 @@ public class PresenterContacts implements IPresenterContacts {
 
     @Override
     public void onPermissionGranted() {
-        Log.d("alxr_debug", "PresenterContacts: onPermissionGranted");
+        permissionRequested = false;
         IPresenterContactsCallback callback = mCallbackReference != null ? mCallbackReference.get() : null;
         if (callback == null) return;
         callback.hideButton();
+        callback.loadContacts();
     }
 
     @Override
     public void onPermissionDenied() {
-        Log.d("alxr_debug", "PresenterContacts: onPermissionDenied");
         IPresenterContactsCallback callback = mCallbackReference != null ? mCallbackReference.get() : null;
         if (callback == null) return;
         callback.showButton();
+    }
+
+    @Override
+    public void onContactSelected(IContact contact) {
+        navigator.navigate(contact);
     }
 
 }

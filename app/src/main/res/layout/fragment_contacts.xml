@@ -10,14 +10,12 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:gravity="center"
-        android:text="RELOAD"
-        android:visibility="invisible" />
+        android:text="@string/reload"
+        android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/temp_label"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="CONTACTS" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

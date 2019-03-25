@@ -5,11 +5,14 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,18 +22,28 @@ import javax.inject.Inject;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.loader.app.LoaderManager;
+import androidx.loader.content.CursorLoader;
+import androidx.loader.content.Loader;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import ru.alxr.contacts.R;
 import ru.alxr.contacts.base.FragmentBase;
 import ru.alxr.contacts.di.MainViewComponent;
 
-public class FragmentContacts extends FragmentBase implements View.OnClickListener {
+public class FragmentContacts extends FragmentBase implements View.OnClickListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int REQUEST_PERMISSION = 1;
     private static final int REQUEST_SETTINGS = 2;
 
+    private static final int LOADER_ID = 3;
+
     private static final String STATE_VIEW_VISIBLE = "isRegretViewVisible";
     private static final String STATE_DIALOG_RATIONALE = "isRationaleShowing";
     private static final String STATE_DIALOG_BAN = "isPermanentBanShowing";
+
+    @Inject
+    LayoutInflater mLayoutInflater;
 
     @Inject
     IPresenterContacts mPresenterContacts;
@@ -39,6 +52,7 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
     private PresenterContactsCallback mCallback;
 
     private View mRegretView;
+    private RecyclerView mRecyclerView;
     private boolean isRegretViewVisible;
     private boolean isRationaleShowing;
     private boolean isPermanentBanShowing;
@@ -63,9 +77,8 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
         isRegretViewVisible = savedInstanceState != null && savedInstanceState.getBoolean(STATE_VIEW_VISIBLE);
         isRationaleShowing = savedInstanceState != null && savedInstanceState.getBoolean(STATE_DIALOG_RATIONALE);
         isPermanentBanShowing = savedInstanceState != null && savedInstanceState.getBoolean(STATE_DIALOG_BAN);
-        setOnClickListener(view, R.id.temp_label, this);
         mRegretView = view.findViewById(R.id.reload_view);
-        mRegretView.setVisibility(isRegretViewVisible ? View.VISIBLE : View.INVISIBLE);
+        mRegretView.setVisibility(isRegretViewVisible ? View.VISIBLE : View.GONE);
         setOnClickListener(view, R.id.reload_view, this);
         if (isRationaleShowing) {
             showRationale();
@@ -73,6 +86,10 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
         if (isPermanentBanShowing) {
             showPermanentlyDeniedDialog();
         }
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        ContactsAdapter adapter = new ContactsAdapter(mLayoutInflater, mPresenterContacts::onContactSelected);
+        mRecyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -86,10 +103,6 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.temp_label:
-                mPresenterContacts.onDebug();
-                break;
-
             case R.id.reload_view:
                 performPermissionRequest();
                 break;
@@ -120,13 +133,20 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
         @Override
         public void hideButton() {
             isRegretViewVisible = false;
-            mRegretView.setVisibility(View.INVISIBLE);
+            mRegretView.setVisibility(View.GONE);
         }
 
         @Override
         public void showButton() {
             isRegretViewVisible = true;
             mRegretView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void loadContacts() {
+            LoaderManager
+                    .getInstance(FragmentContacts.this)
+                    .initLoader(LOADER_ID, null, FragmentContacts.this);
         }
 
     }
@@ -154,6 +174,8 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
+        Activity activity = getActivity();
+        if (activity == null) return;
         if (requestCode != REQUEST_PERMISSION) return;
         if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             mPresenterContacts.onPermissionGranted();
@@ -250,6 +272,43 @@ public class FragmentContacts extends FragmentBase implements View.OnClickListen
     @Override
     protected void onComponentShouldBeDestroyed() {
         // Main activity should handle this event
+    }
+
+    @NonNull
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
+        Log.d("alxr_debug", "onCreateLoader");
+        Activity activity = getActivity();
+        if (activity == null) throw new RuntimeException("activity == null");
+        return new CursorLoader(
+                activity,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,
+                null,
+                null,
+                "display_name ASC"
+        );
+    }
+
+    @Override
+    public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
+        Log.d("alxr_debug", "onLoadFinished " + data.getCount());
+        ContactsAdapter adapter = (ContactsAdapter) mRecyclerView.getAdapter();
+        if (adapter == null) return;
+        adapter.setCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(@NonNull Loader<Cursor> loader) {
+        Log.d("alxr_debug", "onLoadFinished");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ContactsAdapter adapter = (ContactsAdapter) mRecyclerView.getAdapter();
+        if (adapter == null) return;
+        adapter.setCursor(null);
     }
 
 }

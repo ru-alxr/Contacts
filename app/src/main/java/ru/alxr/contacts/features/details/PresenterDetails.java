@@ -16,8 +16,6 @@ public class PresenterDetails implements IPresenterDetails {
     @Inject
     INavigator navigator;
 
-    private IContact mContact;
-
     private WeakReference<IPresentDetailsCallback> mCallbackReference;
 
     @Override
@@ -27,7 +25,14 @@ public class PresenterDetails implements IPresenterDetails {
 
     @Override
     public void setContact(IContact contact) {
-        mContact = contact;
+        IPresentDetailsCallback callback = mCallbackReference != null ? mCallbackReference.get():null;
+        if (callback == null) return;
+        if (contact == null){
+            callback.setInfo("No data");
+        }else{
+            callback.setInfo(contact.getName() + "\n" + contact.getPhone() + "\n" + contact.getImageUri() + "\nand what ever you need..." );
+            //todo
+        }
     }
 
 }

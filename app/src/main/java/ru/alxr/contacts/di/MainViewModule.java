@@ -1,5 +1,8 @@
 package ru.alxr.contacts.di;
 
+import android.content.Context;
+import android.view.LayoutInflater;
+
 import dagger.Module;
 import dagger.Provides;
 import ru.alxr.contacts.di.scopes.MainViewScope;
@@ -21,6 +24,12 @@ public class MainViewModule {
     @MainViewScope
     IPresenterContacts getPresenterContacts() {
         return new PresenterContacts();
+    }
+
+    @Provides
+    @MainViewScope
+    LayoutInflater provideLayoutInflater(Context context){
+        return LayoutInflater.from(context);
     }
 
 }

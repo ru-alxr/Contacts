@@ -36,4 +36,8 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$daggerVersion"
     annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+
+    def materialDesign = '1.0.0'
+    implementation "androidx.recyclerview:recyclerview:$materialDesign"
+
 }

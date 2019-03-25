@@ -9,5 +9,6 @@
     <string name="permission_rationale_positive">OK</string>
     <string name="something_went_wrong">Oops, something went wrong</string>
     <string name="no_permission">Click reload if you\'ll change your mind</string>
+    <string name="reload">RELOAD</string>
 
 </resources>
