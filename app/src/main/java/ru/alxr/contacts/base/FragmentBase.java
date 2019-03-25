@@ -1,13 +1,11 @@
 package ru.alxr.contacts.base;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -18,25 +16,13 @@ public abstract class FragmentBase extends Fragment {
 
     private boolean mIsStateSaved;
 
-    protected void setOnClickListener(View parent, int resId, View.OnClickListener listener) {
+    private void setOnClickListener(AppCompatDelegate parent, int resId, View.OnClickListener listener) {
         View view = parent.findViewById(resId);
         if (view == null) return;
         view.setOnClickListener(listener);
     }
 
-    protected void setOnClickListener(AppCompatDelegate parent, int resId, View.OnClickListener listener) {
-        View view = parent.findViewById(resId);
-        if (view == null) return;
-        view.setOnClickListener(listener);
-    }
-
-    protected void setText(AppCompatDelegate parent, int resId, String text) {
-        TextView view = parent.findViewById(resId);
-        if (view == null) return;
-        view.setText(text);
-    }
-
-    protected void setText(AppCompatDelegate parent, int resId, int text) {
+    private void setText(AppCompatDelegate parent, int resId, int text) {
         TextView view = parent.findViewById(resId);
         if (view == null) return;
         view.setText(text);

@@ -6,8 +6,6 @@ import ru.alxr.contacts.ContactsApplication;
 import ru.alxr.contacts.di.scopes.MainViewScope;
 import ru.alxr.contacts.features.contacts.FragmentContacts;
 import ru.alxr.contacts.features.contacts.PresenterContacts;
-import ru.alxr.contacts.features.details.FragmentDetails;
-import ru.alxr.contacts.features.details.PresenterDetails;
 import ru.alxr.contacts.view.MainActivity;
 import ru.alxr.contacts.view.PresenterMain;
 
