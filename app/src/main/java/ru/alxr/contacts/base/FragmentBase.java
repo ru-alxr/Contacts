@@ -52,14 +52,12 @@ public abstract class FragmentBase extends Fragment {
             @StringRes int negativeLabel,
             @StringRes int positiveLabel,
             OnSelected negative,
-            OnSelected positive,
-            @Nullable DialogInterface.OnDismissListener dismissListener) {
+            OnSelected positive) {
 
         AlertDialog dialog = new AlertDialog
                 .Builder(activity)
                 .setView(R.layout.dialog_dual_selection)
                 .setCancelable(false)
-                .setOnDismissListener(dismissListener)
                 .show();
         setText(dialog.getDelegate(), R.id.message, message);
         setText(dialog.getDelegate(), R.id.positive, positiveLabel);

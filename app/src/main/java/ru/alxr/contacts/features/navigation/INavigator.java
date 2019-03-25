@@ -18,4 +18,8 @@ public interface INavigator {
 
     boolean navigateBack();
 
+    // void navigateSettings();
+    // todo
+    // need to figure out how to implement this feature right way
+
 }

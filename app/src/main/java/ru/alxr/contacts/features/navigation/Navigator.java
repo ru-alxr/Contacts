@@ -1,7 +1,6 @@
 package ru.alxr.contacts.features.navigation;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
@@ -25,11 +24,9 @@ public class Navigator implements INavigator {
 
     @Override
     public void navigateContacts() {
-        Log.d("alxr_debug", "Navigator: navigateContacts");
         FragmentManager manager;
         if (refFragmentManager == null || (manager = refFragmentManager.get()) == null) return;
         Fragment fragment = manager.findFragmentByTag(TAG_CONTACTS_LIST);
-        Log.d("alxr_debug", "Navigator: navigateContacts...fragment = " + fragment);
         if (fragment == null) fragment = new FragmentContacts();
         manager
                 .beginTransaction()
@@ -39,7 +36,6 @@ public class Navigator implements INavigator {
 
     @Override
     public void navigate(@NonNull IContact contact) {
-        Log.d("alxr_debug", "Navigator: navigate");
         FragmentManager manager;
         if (refFragmentManager == null || (manager = refFragmentManager.get()) == null) return;
         FragmentDetails fragment = new FragmentDetails();
@@ -48,18 +44,23 @@ public class Navigator implements INavigator {
         fragment.setArguments(args);
         manager
                 .beginTransaction()
-                .replace(containerId, fragment, TAG_CONTACT_DETAILS)
+                .add(containerId, fragment, TAG_CONTACT_DETAILS)
                 .commit();
     }
 
     @Override
     public boolean navigateBack() {
-        Log.d("alxr_debug", "Navigator: navigateBack");
         FragmentManager manager;
         if (refFragmentManager == null || (manager = refFragmentManager.get()) == null)
             return false;
-        Log.d("alxr_debug", "Navigator: navigateBack..." + manager.findFragmentByTag(TAG_CONTACT_DETAILS));
-        return manager.findFragmentByTag(TAG_CONTACT_DETAILS) != null;
+        Fragment fragment = manager.findFragmentByTag(TAG_CONTACT_DETAILS);
+        if (fragment != null) {
+            manager
+                    .beginTransaction()
+                    .remove(fragment)
+                    .commit();
+        }
+        return fragment != null;
     }
 
 }

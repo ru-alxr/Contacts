@@ -35,11 +35,7 @@ public class PresenterMain implements IPresenterMain {
 
     @Override
     public boolean onBackPressed() {
-        if (navigator.navigateBack()) {
-            navigator.navigateContacts();
-            return true;
-        }
-        return false;
+        return navigator.navigateBack();
     }
 
     @Override

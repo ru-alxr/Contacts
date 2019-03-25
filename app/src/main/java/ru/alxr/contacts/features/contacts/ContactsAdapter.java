@@ -1,7 +1,6 @@
 package ru.alxr.contacts.features.contacts;
 
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +42,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
             image = null;
         }
         //todo more fields if required
-
         return new ContactImpl
                 .Builder()
                 .setName(name)
@@ -57,44 +55,6 @@ public class ContactsAdapter extends RecyclerView.Adapter<ContactsAdapter.Contac
     void setCursor(Cursor cursor) {
         mCursor = cursor;
         notifyDataSetChanged();
-        if (cursor != null && !cursor.isClosed() && cursor.moveToFirst()) {
-            Log.d("ContactsAdapter", String.format("CURSOR HAS %s RECORDS AND %s columns", cursor.getCount(), cursor.getColumnCount()));
-            for (int i = 0; i < cursor.getColumnCount(); i++) {
-                String name = cursor.getColumnName(i);
-                int type = cursor.getType(i);
-
-                //if (type != Cursor.FIELD_TYPE_STRING) continue;
-                Log
-                        .d(
-                                "ContactsAdapter",
-                                String
-                                        .format(
-                                                "%d. %s : %s VALUE=[%s]",
-                                                i,
-                                                name,
-                                                getDataType(type),
-                                                cursor.getString(i)
-                                        )
-                        );
-            }
-        }
-    }
-
-    private String getDataType(int type) {
-        switch (type) {
-            case Cursor.FIELD_TYPE_NULL:
-                return "FIELD_TYPE_NULL";
-            case Cursor.FIELD_TYPE_INTEGER:
-                return "FIELD_TYPE_INTEGER";
-            case Cursor.FIELD_TYPE_FLOAT:
-                return "FIELD_TYPE_FLOAT";
-            case Cursor.FIELD_TYPE_STRING:
-                return "FIELD_TYPE_STRING";
-            case Cursor.FIELD_TYPE_BLOB:
-                return "FIELD_TYPE_BLOB";
-            default:
-                return "Unknown";
-        }
     }
 
     private int getItemCount(@Nullable Cursor cursor) {
